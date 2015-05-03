@@ -43,10 +43,10 @@ var Game = {
 	},
 	loading : function() {
 		if(
-			typeof sprites.santaClauseUp !== "undefined" &&
-			typeof sprites.santaClauseRight !== "undefined" &&
-			typeof sprites.santaClauseDown !== "undefined" &&
-			typeof sprites.santaClauseLeft !== "undefined"
+			typeof sprites.santaClausUp !== "undefined" &&
+			typeof sprites.santaClausRight !== "undefined" &&
+			typeof sprites.santaClausDown !== "undefined" &&
+			typeof sprites.santaClausLeft !== "undefined"
 		) {
 			Game.status = "splash";
 		}
@@ -55,23 +55,23 @@ var Game = {
 		Game.status = "playing";
 	},
 	playing : function() {
-		if(Game.santaClause.status === "initial") {
-			sprites.santaClauseDown.render(
-				settings.resolution.width / 2 - ((sprites.santaClauseDown.width / 2) / sprites.santaClauseDown.qntFrames),
-    			settings.resolution.height / 2 - sprites.santaClauseDown.height / 2
+		if(Game.santaClaus.status === "initial") {
+			sprites.santaClausDown.render(
+				settings.resolution.width / 2 - ((sprites.santaClausDown.width / 2) / sprites.santaClausDown.qntFrames),
+    			settings.resolution.height / 2 - sprites.santaClausDown.height / 2
 			);
 
-			position = sprites.santaClauseDown.getPosition();
+			position = sprites.santaClausDown.getPosition();
 			
-			Game.santaClause.updatePosition(position.width, position.height);
+			Game.santaClaus.updatePosition(position.width, position.height);
 
-			Game.santaClause.status = "stopped";
-			Game.santaClause.movementDirection = "down";
+			Game.santaClaus.status = "stopped";
+			Game.santaClaus.movementDirection = "down";
 		} else {
-			Game.santaClause.updateMovement();
+			Game.santaClaus.updateMovement();
 		}
 	},
-	santaClause : {
+	santaClaus : {
 		status : "initial",
 		speed : 2,
 		movementDirection : "",
@@ -79,76 +79,76 @@ var Game = {
 		updateMovement : function() {
 			var position = {};
 
-			switch (Game.santaClause.keys.last()) {
+			switch (Game.santaClaus.keys.last()) {
 				case 37 :
-					Game.santaClause.movementDirection = "left";
+					Game.santaClaus.movementDirection = "left";
 
-					position = sprites.santaClauseLeft.getPosition();
+					position = sprites.santaClausLeft.getPosition();
 					position.width -= 2;
 
-					sprites.santaClauseLeft.run(position.width, position.height);	
+					sprites.santaClausLeft.run(position.width, position.height);	
 				break;
 				case 38 :
-					Game.santaClause.movementDirection = "up";
+					Game.santaClaus.movementDirection = "up";
 
-					position = sprites.santaClauseUp.getPosition();
+					position = sprites.santaClausUp.getPosition();
 					position.height -= 2;
 
-					sprites.santaClauseUp.run(position.width, position.height);
+					sprites.santaClausUp.run(position.width, position.height);
 				break;
 				case 39 :
-					Game.santaClause.movementDirection = "right";
+					Game.santaClaus.movementDirection = "right";
 
-					position = sprites.santaClauseRight.getPosition();
+					position = sprites.santaClausRight.getPosition();
 					position.width += 2;
 
-					sprites.santaClauseRight.run(position.width, position.height);
+					sprites.santaClausRight.run(position.width, position.height);
 				break;
 				case 40 :
-					Game.santaClause.movementDirection = "down";
+					Game.santaClaus.movementDirection = "down";
 
-					position = sprites.santaClauseDown.getPosition();
+					position = sprites.santaClausDown.getPosition();
 					position.height += 2;
 
-					sprites.santaClauseDown.run(position.width, position.height);
+					sprites.santaClausDown.run(position.width, position.height);
 				break;
 				default :
-					Game.santaClause.status = "stopped";
+					Game.santaClaus.status = "stopped";
 
-					switch (Game.santaClause.movementDirection) {
-						case "left": sprites.santaClauseLeft.render(); break;
-						case "up": sprites.santaClauseUp.render(); break;
-						case "right": sprites.santaClauseRight.render(); break;
-						case "down": sprites.santaClauseDown.render(); break;
+					switch (Game.santaClaus.movementDirection) {
+						case "left": sprites.santaClausLeft.render(); break;
+						case "up": sprites.santaClausUp.render(); break;
+						case "right": sprites.santaClausRight.render(); break;
+						case "down": sprites.santaClausDown.render(); break;
 					}
 
 					return;
 				break;
 			}
 
-			Game.santaClause.updatePosition(position.width, position.height);
+			Game.santaClaus.updatePosition(position.width, position.height);
 		},
 		updateKey : function(e) {
 			if(Game.status === "playing" && e.keyCode >= 37 && e.keyCode <= 40) {
 				switch (e.type) {
 					case "keyup":
-						Game.santaClause.keys.splice(Game.santaClause.keys.indexOf(e.keyCode), 1);
+						Game.santaClaus.keys.splice(Game.santaClaus.keys.indexOf(e.keyCode), 1);
 					break;
 					case "keydown":
-						if(Game.santaClause.keys.indexOf(e.keyCode) === -1) {
-							Game.santaClause.keys.push(e.keyCode);
+						if(Game.santaClaus.keys.indexOf(e.keyCode) === -1) {
+							Game.santaClaus.keys.push(e.keyCode);
 
-							Game.santaClause.status = "walking";
+							Game.santaClaus.status = "walking";
 						}
 					break;
 				}
 			}
 		},
 		updatePosition : function(x, y) {
-			sprites.santaClauseUp.setPosition(x, y);
-			sprites.santaClauseRight.setPosition(x, y);
-			sprites.santaClauseDown.setPosition(x, y);
-			sprites.santaClauseLeft.setPosition(x, y);
+			sprites.santaClausUp.setPosition(x, y);
+			sprites.santaClausRight.setPosition(x, y);
+			sprites.santaClausDown.setPosition(x, y);
+			sprites.santaClausLeft.setPosition(x, y);
 		}
 	}
 };
@@ -173,35 +173,35 @@ var Game = {
 	var sprites = {};
 
 	// Events
-	document.addEventListener("keydown", Game.santaClause.updateKey);
-	document.addEventListener("keyup", Game.santaClause.updateKey);
+	document.addEventListener("keydown", Game.santaClaus.updateKey);
+	document.addEventListener("keyup", Game.santaClaus.updateKey);
 
 	// Images
-	var imgSantaClause = new Image();
-		imgSantaClause.src = settings.imgPath + "santa_clause.png";
-		imgSantaClause.onload = function() {
-			sprites["santaClauseLeft"] = this.sprite({
+	var imgSantaClaus = new Image();
+		imgSantaClaus.src = settings.imgPath + "santa_claus.png";
+		imgSantaClaus.onload = function() {
+			sprites["santaClausLeft"] = this.sprite({
 				height : 36,
 				heightCapture : 37,
 				qntFrames : 3,
 				speed : 15
 			});
 
-			sprites["santaClauseUp"] = this.sprite({
+			sprites["santaClausUp"] = this.sprite({
 				height : 36,
 				heightCapture : 109,
 				qntFrames : 3,
 				speed : 15
 			});
 
-			sprites["santaClauseRight"] = this.sprite({
+			sprites["santaClausRight"] = this.sprite({
 				height : 36,
 				heightCapture : 73,
 				qntFrames : 3,
 				speed : 15
 			});
 
-			sprites["santaClauseDown"] = this.sprite({
+			sprites["santaClausDown"] = this.sprite({
 				height : 36,
 				qntFrames : 3,
 				speed : 15
