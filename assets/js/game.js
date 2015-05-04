@@ -56,69 +56,74 @@ var Game = {
 	},
 	playing : function() {
 		if(Game.santaClause.status === "initial") {
-			sprites.santaClauseRight.render(0, 175);
+			sprites.santaClauseDown.render(
+				settings.resolution.width / 2 - ((sprites.santaClauseDown.width / 2) / sprites.santaClauseDown.qntFrames),
+    			settings.resolution.height / 2 - sprites.santaClauseDown.height / 2
+			);
 
-			position = sprites.santaClauseRight.getPosition();
+			position = sprites.santaClauseDown.getPosition();
 			
 			Game.santaClause.updatePosition(position.width, position.height);
 
 			Game.santaClause.status = "stopped";
-			Game.santaClause.movementDirection = "right";
+			Game.santaClause.movementDirection = "down";
 		} else {
 			Game.santaClause.updateMovement();
 		}
 	},
 	santaClause : {
 		status : "initial",
+		speed : 2,
 		movementDirection : "",
-		keys : {
-			37 : false,
-			38 : false,
-			39 : false,
-			40 : false
-		},
+		keys : [],
 		updateMovement : function() {
 			var position = {};
 
-			if(Game.santaClause.keys[37]) {
-				Game.santaClause.movementDirection = "left";
+			switch (Game.santaClause.keys.last()) {
+				case 37 :
+					Game.santaClause.movementDirection = "left";
 
-				position = sprites.santaClauseLeft.getPosition();
-				--position.width;
+					position = sprites.santaClauseLeft.getPosition();
+					position.width -= 2;
 
-				sprites.santaClauseLeft.run(position.width, position.height);
-			} else if(Game.santaClause.keys[38]) {
-				Game.santaClause.movementDirection = "up";
+					sprites.santaClauseLeft.run(position.width, position.height);	
+				break;
+				case 38 :
+					Game.santaClause.movementDirection = "up";
 
-				position = sprites.santaClauseUp.getPosition();
-				--position.height;
+					position = sprites.santaClauseUp.getPosition();
+					position.height -= 2;
 
-				sprites.santaClauseUp.run(position.width, position.height);
-			} else if(Game.santaClause.keys[39]) {
-				Game.santaClause.movementDirection = "right";
+					sprites.santaClauseUp.run(position.width, position.height);
+				break;
+				case 39 :
+					Game.santaClause.movementDirection = "right";
 
-				position = sprites.santaClauseRight.getPosition();
-				++position.width;
+					position = sprites.santaClauseRight.getPosition();
+					position.width += 2;
 
-				sprites.santaClauseRight.run(position.width, position.height);
-			} else if(Game.santaClause.keys[40]) {
-				Game.santaClause.movementDirection = "down";
+					sprites.santaClauseRight.run(position.width, position.height);
+				break;
+				case 40 :
+					Game.santaClause.movementDirection = "down";
 
-				position = sprites.santaClauseDown.getPosition();
-				++position.height;
+					position = sprites.santaClauseDown.getPosition();
+					position.height += 2;
 
-				sprites.santaClauseDown.run(position.width, position.height);
-			} else {
-				Game.santaClause.status = "stopped";
+					sprites.santaClauseDown.run(position.width, position.height);
+				break;
+				default :
+					Game.santaClause.status = "stopped";
 
-				switch (Game.santaClause.movementDirection) {
-					case "left": sprites.santaClauseLeft.render(); break;
-					case "up": sprites.santaClauseUp.render(); break;
-					case "right": sprites.santaClauseRight.render(); break;
-					case "down": sprites.santaClauseDown.render(); break;
-				}
+					switch (Game.santaClause.movementDirection) {
+						case "left": sprites.santaClauseLeft.render(); break;
+						case "up": sprites.santaClauseUp.render(); break;
+						case "right": sprites.santaClauseRight.render(); break;
+						case "down": sprites.santaClauseDown.render(); break;
+					}
 
-				return;
+					return;
+				break;
 			}
 
 			Game.santaClause.updatePosition(position.width, position.height);
@@ -127,12 +132,14 @@ var Game = {
 			if(Game.status === "playing" && e.keyCode >= 37 && e.keyCode <= 40) {
 				switch (e.type) {
 					case "keyup":
-						Game.santaClause.keys[e.keyCode] = false;
+						Game.santaClause.keys.splice(Game.santaClause.keys.indexOf(e.keyCode), 1);
 					break;
 					case "keydown":
-						Game.santaClause.keys[e.keyCode] = true;
+						if(Game.santaClause.keys.indexOf(e.keyCode) === -1) {
+							Game.santaClause.keys.push(e.keyCode);
 
-						Game.santaClause.status = "walking";
+							Game.santaClause.status = "walking";
+						}
 					break;
 				}
 			}
@@ -173,42 +180,38 @@ var Game = {
 	var imgSantaClause = new Image();
 		imgSantaClause.src = settings.imgPath + "santa_clause.png";
 		imgSantaClause.onload = function() {
+			sprites["santaClauseLeft"] = this.sprite({
+				height : 36,
+				heightCapture : 37,
+				qntFrames : 3,
+				speed : 15
+			});
+
 			sprites["santaClauseUp"] = this.sprite({
 				height : 36,
 				heightCapture : 109,
 				qntFrames : 3,
-				speed : 10
+				speed : 15
 			});
 
 			sprites["santaClauseRight"] = this.sprite({
 				height : 36,
 				heightCapture : 73,
 				qntFrames : 3,
-				speed : 10
+				speed : 15
 			});
 
 			sprites["santaClauseDown"] = this.sprite({
 				height : 36,
 				qntFrames : 3,
-				speed : 10
-			});
-
-			sprites["santaClauseLeft"] = this.sprite({
-				height : 36,
-				heightCapture : 37,
-				qntFrames : 3,
-				speed : 10
+				speed : 15
 			});
 		};
 
 // JS Prototypes
-Array.prototype.getRandom = function() {
-	return this[Math.floor(Math.random() * this.length)];
+Array.prototype.last = function(){
+    return this[this.length - 1];
 };
-
-Number.prototype.leftPad = function (length, padString){
-    return Array(length - String(this).length + 1).join(padString || '0') + this;
-}
 
 Image.prototype.sprite = function(attr) {
 	var sprite = {
