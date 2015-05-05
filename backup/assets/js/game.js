@@ -70,6 +70,8 @@ var Game = {
 		} else {
 			Game.santaClaus.updateMovement();
 		}
+
+		ctx.drawImage(imgBackground, 0, 0);
 	},
 	santaClaus : {
 		status : "initial",
@@ -177,6 +179,8 @@ var Game = {
 	document.addEventListener("keyup", Game.santaClaus.updateKey);
 
 	// Images
+	var imgBackground = new Image();
+		imgBackground.src = settings.imgPath + "bgt.png";
 	var imgSantaClaus = new Image();
 		imgSantaClaus.src = settings.imgPath + "santa_claus.png";
 		imgSantaClaus.onload = function() {
