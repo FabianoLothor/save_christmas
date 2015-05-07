@@ -1,19 +1,19 @@
 var canvas, context, images;
 
-$(document).ready(function() {
+$(document).ready(function () {
 	loadResources();
 
 	initialize();
 });
 
-function initialize() {
+function initialize () {
 	canvas = document.getElementById('canvas');
 	context = canvas.getContext('2d');
 
 	game.actions.start();
 }
 
-function loadResources() {
+function loadResources () {
 	images = {};
 
 	for (extension in settings.resources.images) {
@@ -28,8 +28,4 @@ function loadResources() {
 			}
 		}
 	}
-}
-
-function clearCanvas() {
-	context.clearRect(0, 0, canvas.width, canvas.height);
 }
