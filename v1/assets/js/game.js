@@ -55,8 +55,19 @@ var game = {
 					height : 36,
 
 					frames : 3,
-					speed : 2,
+					speed : 3,
 					frameSpeed : 7,
+
+					limits : {
+						min : {
+							x : -10,
+							y : -10,
+						},
+						max : {
+							x : canvas.width - 20,
+							y : canvas.height - 20,
+						},
+					},
 
 					direction : "down",
 					directions : {
