@@ -11,54 +11,87 @@ var utils = {
 
 		// _ Internal Functions
 
-		sprite.getCentralPosition = function () {
-			return {
-				x : context.canvas.width / 2 - ((sprite.image.width / 2) / sprite.frames),
-				y : context.canvas.height / 2 - sprite.image.height / 2,
+			sprite.getCentralPosition = function () {
+				return {
+					x : ((sprite.maxWidth - sprite.minWidth) / 2) - ((sprite.image.width / 2) / sprite.frames),
+					y : ((sprite.maxHeight - sprite.minHeight) / 2) - sprite.height / 2,
+				};
 			};
-		};
-
-		sprite.getPosition = function () {
-			return sprite.position;
-		}
-
-		sprite.setPosition = function (x, y) {
-			sprite.position.x = x || sprite.position.x;
-			sprite.position.y = y || sprite.position.y;
-		};
-
-		sprite.getDirectionValues = function (direction) {
-			return sprite.directions[direction];
-		};
-
-		sprite.moveTo = function (direction) {
-			switch (direction) {
-				case "left" :
-					sprite.setPosition(
-						sprite.getPosition().x - sprite.speed,
-						sprite.getPosition().y
-					);
-				break;
-				case "up" :
-					sprite.setPosition(
-						sprite.getPosition().x,
-						sprite.getPosition().y - sprite.speed
-					);
-				break;
-				case "right" :
-					sprite.setPosition(
-						sprite.getPosition().x + sprite.speed,
-						sprite.getPosition().y
-					);
-				break;
-				case "down" :
-					sprite.setPosition(
-						sprite.getPosition().x,
-						sprite.getPosition().y + sprite.speed
-					);
-				break;
+			sprite.getPosition = function () {
+				return sprite.position;
 			}
-		};
+
+			sprite.setPosition = function (x, y) {
+				sprite.position.x = x || sprite.position.x;
+				sprite.position.y = y || sprite.position.y;
+			};
+
+			sprite.getDirectionValues = function (direction) {
+				return sprite.directions[direction];
+			};
+
+			sprite.move = function () {
+				sprite.framesCounter += 1;
+				
+		        if (sprite.framesCounter > sprite.frameSpeed) {
+		            sprite.framesCounter = 0;
+
+		            if (sprite.frameIndex < sprite.frames - 1) {
+		                sprite.frameIndex += 1;
+		            } else {
+		                sprite.frameIndex = 0;
+		            }	
+		        }
+			};
+
+			sprite.moveTo = function (direction) {
+				switch (direction) {
+					case "left" :
+						sprite.direction = "left";
+						sprite.setPosition(
+							sprite.getPosition().x - sprite.speed,
+							sprite.getPosition().y
+						);
+					break;
+					case "up" :
+						sprite.direction = "up";
+						sprite.setPosition(
+							sprite.getPosition().x,
+							sprite.getPosition().y - sprite.speed
+						);
+					break;
+					case "right" :
+						sprite.direction = "right";
+						sprite.setPosition(
+							sprite.getPosition().x + sprite.speed,
+							sprite.getPosition().y
+						);
+					break;
+					case "down" :
+						sprite.direction = "down";
+						sprite.setPosition(
+							sprite.getPosition().x,
+							sprite.getPosition().y + sprite.speed
+						);
+					break;
+				}
+
+				sprite.move();
+			};
+
+			sprite.render = function () {
+				sprite.context.drawImage(
+		   			sprite.image,
+		       		sprite.directions[sprite.direction].x + (sprite.frameIndex * sprite.width / sprite.frames),
+		       		sprite.directions[sprite.direction].y,
+		       		sprite.width / sprite.frames,
+		       		sprite.height,
+		       		sprite.getPosition().x,
+		   			sprite.getPosition().y,
+		       		sprite.width / sprite.frames,
+		       		sprite.height
+				);
+			};
 
 		// Internal Functions _
 
@@ -69,23 +102,19 @@ var utils = {
 		sprite.width = attributes.width || attributes.image.width;
 		sprite.height = attributes.height || attributes.image.height;
 
+		sprite.minWidth = attributes.minWidth || 0;
+		sprite.maxWidth = attributes.maxWidth || sprite.context.canvas.width;
+		sprite.minHeight = attributes.minHeight || 0;
+		sprite.maxHeight = attributes.maxHeight || sprite.context.canvas.height;
+
 		sprite.frames = attributes.frames || 1;
 		sprite.speed = attributes.speed || 1;
-		sprite.frameSpeed = attributes.speed || 10;
+		sprite.frameSpeed = attributes.frameSpeed || 10;
 
 		sprite.frameIndex = 0;
 		sprite.framesCounter = 0;
 
-		sprite.position = {};
-
-		if (typeof attributes.position === "undefined") {
-			sprite.position.x = sprite.getCentralPosition().x;
-			sprite.position.y = sprite.getCentralPosition().y;
-		} else {
-			sprite.position.x = attributes.position.x || sprite.getCentralPosition().x;
-			sprite.position.y = attributes.position.y || sprite.getCentralPosition().y;
-		}
-
+		sprite.direction = attributes.direction || "";
 		sprite.directions = {};
 
 		if (typeof attributes.directions !== "undefined") {
@@ -126,100 +155,16 @@ var utils = {
 			}
 		}
 
+		sprite.position = {};
+
+		if (typeof attributes.position === "undefined") {
+			sprite.position.x = sprite.getCentralPosition().x;
+			sprite.position.y = sprite.getCentralPosition().y;
+		} else {
+			sprite.position.x = attributes.position.x || sprite.getCentralPosition().x;
+			sprite.position.y = attributes.position.y || sprite.getCentralPosition().y;
+		}
+
 		return sprite;
 	},
 };
-/*
-Image.prototype.sprite = function(attr) {
-	var sprite = {
-		context : ctx,
-		img : this,
-
-	    width : attr.width || this.width,
-	    height : attr.height || this.height,
-
-		widthCapture : attr.widthCapture || 0,
-		heightCapture : attr.heightCapture || 0,
-		widthPosition : attr.widthPosition || 0,
-		heightPosition : attr.heightPosition || 0,
-
-		minWidthPosition : attr.minWidthPosition || -10,
-		minHeightPosition : attr.minHeightPosition || -10,
-		maxWidthPosition : attr.maxWidthPosition || (settings.resolution.width - 10),
-		maxHeightPosition : attr.maxHeightPosition || (settings.resolution.height - 10),
-
-		qntFrames : attr.qntFrames || 1,
-		speed : attr.speed || 0,
-		loop : attr.loop || true,
-		
-		frameIndex : 0,
-	    framesCount : 0,
-
-	    getPosition : function() {
-	    	return {
-	    		width : sprite.widthPosition,
-	    		height : sprite.heightPosition
-	    	};
-	    },
-
-	    setPosition : function(x, y) {
-	    	if(x < sprite.minWidthPosition) {
-	    		x = sprite.minWidthPosition;
-	    	}
-
-	    	if(x > sprite.maxWidthPosition) {
-	    		x = sprite.maxWidthPosition
-	    	}
-
-	    	if(y < sprite.minHeightPosition) {
-	    		y = sprite.minHeightPosition;
-	    	}
-
-	    	if(y > sprite.maxHeightPosition) {
-	    		y = sprite.maxHeightPosition
-	    	}
-
-	    	sprite.widthPosition = x || 0;
-    		sprite.heightPosition = y || 0;
-	    },
-
-	    render : function(x, y) {
-	    	sprite.setPosition(x || sprite.widthPosition, y || sprite.heightPosition);
-
-	        sprite.context.drawImage(
-	   			sprite.img,
-	       		sprite.widthCapture + (sprite.frameIndex * sprite.width / sprite.qntFrames),
-	       		sprite.heightCapture,
-	       		sprite.width / sprite.qntFrames,
-	       		sprite.height,
-	       		sprite.widthPosition,
-	   			sprite.heightPosition,
-	       		sprite.width / sprite.qntFrames,
-	       		sprite.height
-			);
-	    },
-
-	    run : function(x, y) {
-	    	sprite.render(x, y);
-
-	        sprite.framesCount += 1;
-				
-	        if (sprite.framesCount > sprite.speed) {
-	            sprite.framesCount = 0;
-
-	            if (sprite.frameIndex < sprite.qntFrames - 1) {
-	                sprite.frameIndex += 1;
-	            } else if (sprite.loop) {
-	                sprite.frameIndex = 0;
-	            }	
-	        }
-	    },
-
-	    stop : function () {
-	    	sprite.loop = false;
-	    }
-	};
-
-    return sprite;
-}
-*/
