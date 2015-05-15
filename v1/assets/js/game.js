@@ -94,6 +94,11 @@ var game = {
 							y : canvas.height - 20,
 						},
 					},
+
+					position : {
+						x : utils.getRandomInteger(-10, canvas.width - 20),
+						y : utils.getRandomInteger(-10, canvas.height - 20),
+					},
 				});
 
 			// Setting Sprites _
@@ -101,12 +106,19 @@ var game = {
 			game.status = "configured";
 		},
 		update : {
-			characters : function () {
+			sprites : function () {
 				switch (game.statusKeys.last()) {
 					case 37 : game.sprites["santa_claus"].moveTo("left"); break;
 					case 38 : game.sprites["santa_claus"].moveTo("up"); break;
 					case 39 : game.sprites["santa_claus"].moveTo("right"); break;
 					case 40 : game.sprites["santa_claus"].moveTo("down"); break;
+				}
+
+				if (game.sprites["santa_claus"].checkColisionWith(game.sprites["gift"])) {
+					game.sprites["gift"].setPosition(
+						utils.getRandomInteger(game.sprites["gift"].limits.min.x, game.sprites["gift"].limits.max.x),
+						utils.getRandomInteger(game.sprites["gift"].limits.min.y, game.sprites["gift"].limits.max.y)
+					);
 				}
 			},
 		},
@@ -153,7 +165,7 @@ var game = {
 			}
 		},
 		playing : function () {
-			game.actions.update.characters();
+			game.actions.update.sprites();
 
 			game.sprites["santa_claus"].render();
 			game.sprites["gift"].render();

@@ -2,6 +2,9 @@ var utils = {
 	clearCanvas : function () {
 		context.clearRect(0, 0, canvas.width, canvas.height);
 	},
+	getRandomInteger : function (min, max) {
+		return Math.floor(Math.random() * ((max + 1) - min)) + min;
+	},
 	getSprite : function (attributes) {
 		var sprite = {};
 
@@ -10,6 +13,12 @@ var utils = {
 		}
 
 		// _ Internal Functions
+
+			sprite.checkColisionWith = function (other_sprite) {
+				if (sprite.position.x < other_sprite.position.x + (other_sprite.width / other_sprite.frames)  && (sprite.width / sprite.frames) + sprite.position.x > other_sprite.position.x &&
+					sprite.position.y < other_sprite.position.y + other_sprite.height && sprite.height + sprite.position.y > other_sprite.position.y
+				) { return true; } return false;
+			}
 
 			sprite.getCentralPosition = function () {
 				return {
