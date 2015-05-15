@@ -99,8 +99,8 @@ var utils = {
 			sprite.render = function () {
 				sprite.context.drawImage(
 		   			sprite.image,
-		       		sprite.directions[sprite.direction].x + (sprite.frameIndex * sprite.width / sprite.frames),
-		       		sprite.directions[sprite.direction].y,
+		       		sprite.directions[sprite.direction] === false ? 0 : sprite.directions[sprite.direction].x + (sprite.frameIndex * sprite.width / sprite.frames),
+		       		sprite.directions[sprite.direction] === false ? 0 : sprite.directions[sprite.direction].y,
 		       		sprite.width / sprite.frames,
 		       		sprite.height,
 		       		sprite.getPosition().x,
@@ -150,7 +150,7 @@ var utils = {
 			}
 		}
 
-		sprite.direction = attributes.direction || "";
+		sprite.direction = attributes.direction || "none";
 		sprite.directions = {};
 
 		if (typeof attributes.directions !== "undefined") {
@@ -189,6 +189,8 @@ var utils = {
 					y : attributes.directions.down.y,
 				};
 			}
+		} else {
+			sprite.directions.none = false;
 		}
 
 		sprite.position = {};

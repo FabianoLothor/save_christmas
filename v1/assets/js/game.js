@@ -78,6 +78,24 @@ var game = {
 					},
 				});
 
+				game.sprites["gift"] = utils.getSprite({
+					image : images["gift"],
+					context : context,
+
+					frames : 1,
+
+					limits : {
+						min : {
+							x : -10,
+							y : -10,
+						},
+						max : {
+							x : canvas.width - 20,
+							y : canvas.height - 20,
+						},
+					},
+				});
+
 			// Setting Sprites _
 
 			game.status = "configured";
@@ -138,6 +156,7 @@ var game = {
 			game.actions.update.characters();
 
 			game.sprites["santa_claus"].render();
+			game.sprites["gift"].render();
 		},
 	}
 };

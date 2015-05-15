@@ -12,6 +12,7 @@ var settings = {
 		images : {
 			png : [
 				"santa_claus",
+				"gift",
 			],
 		},
 	},
