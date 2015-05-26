@@ -18,16 +18,23 @@ var game = {
 		check : function () {
 			switch (game.status) {
 				case "initial" :
-					game.status = "loading";
 					game.scene = "loading";
+					game.status = "loading";
 				break;
 				case "loadded" :
 					game.status = "setting";
+
 					game.actions.configure();
 				break;
 				case "configured" :
-					game.status = "initialized";
 					game.scene = "splash";
+					game.status = "initialized";
+				break;
+				case "starting" :
+					game.scene = "playing";
+					game.status = "playing";
+
+					game.actions.add.wizard();
 				break;
 			}
 		},
@@ -47,6 +54,29 @@ var game = {
 			// Setting Canvas _
 
 			// _ Setting Sprites
+
+				game.sprites["gift"] = utils.getSprite({
+					image : images["gift"],
+					context : context,
+
+					frames : 1,
+
+					limits : {
+						min : {
+							x : -10,
+							y : -10,
+						},
+						max : {
+							x : canvas.width - 20,
+							y : canvas.height - 20,
+						},
+					},
+
+					position : {
+						x : utils.getRandomInteger(-10, canvas.width - 20),
+						y : utils.getRandomInteger(-10, canvas.height - 20),
+					},
+				});
 
 				game.sprites["santa_claus"] = utils.getSprite({
 					image : images["santa_claus"],
@@ -78,11 +108,15 @@ var game = {
 					},
 				});
 
-				game.sprites["gift"] = utils.getSprite({
-					image : images["gift"],
+				game.sprites["wizard"] = utils.getSprite({
+					image : images["wizard"],
 					context : context,
 
-					frames : 1,
+					height : 32,
+
+					frames : 3,
+					speed : 3,
+					frameSpeed : 7,
 
 					limits : {
 						min : {
@@ -95,18 +129,32 @@ var game = {
 						},
 					},
 
-					position : {
-						x : utils.getRandomInteger(-10, canvas.width - 20),
-						y : utils.getRandomInteger(-10, canvas.height - 20),
+					direction : "down",
+					directions : {
+						left : { x : 0, y : 33 },
+						up : { x : 0, y : 97 },
+						right : { x : 0, y : 65 },
+						down : { x : 0, y : 0 },
 					},
 				});
+
+				game.sprites["wizards"] = [];
 
 			// Setting Sprites _
 
 			game.status = "configured";
 		},
+		add : {
+			wizard : function () {
+				game.sprites["wizards"].push(game.sprites["wizard"]);
+
+				game.sprites["wizards"].last().setPosition();
+			},
+		},
 		update : {
 			sprites : function () {
+				// _ Updating Santa Claus Position
+
 				switch (game.statusKeys.last()) {
 					case 37 : game.sprites["santa_claus"].moveTo("left"); break;
 					case 38 : game.sprites["santa_claus"].moveTo("up"); break;
@@ -114,18 +162,32 @@ var game = {
 					case 40 : game.sprites["santa_claus"].moveTo("down"); break;
 				}
 
+				// Updating Santa Claus Position _
+
+				// _ Updating Wizards Positions
+
+				
+
+				// Updating Wizards Positions _
+
+				// _ Checking colision beteween Santa Claus and Gift
+
 				if (game.sprites["santa_claus"].checkColisionWith(game.sprites["gift"])) {
 					game.sprites["gift"].setPosition(
 						utils.getRandomInteger(game.sprites["gift"].limits.min.x, game.sprites["gift"].limits.max.x),
 						utils.getRandomInteger(game.sprites["gift"].limits.min.y, game.sprites["gift"].limits.max.y)
 					);
+
+					game.actions.add.wizard();
 				}
+
+				// Checking colision beteween Santa Claus and Gift _
 			},
 		},
 	},
 	events : {
 		updateStatusKeys : function (e) {
-			if (game.status === "initialized" && game.scene === "playing" && e.keyCode >= 37 && e.keyCode <= 40) {
+			if (game.status === "playing" && game.scene === "playing" && e.keyCode >= 37 && e.keyCode <= 40) {
 				switch (e.type) {
 					case "keyup":
 						game.statusKeys.splice(game.statusKeys.indexOf(e.keyCode), 1);
@@ -160,7 +222,7 @@ var game = {
 		splash : function () {
 			switch (game.status) {
 				case "initialized" :
-					game.scene = "playing";
+					game.status = "starting";
 				break;
 			}
 		},
@@ -169,6 +231,12 @@ var game = {
 
 			game.sprites["santa_claus"].render();
 			game.sprites["gift"].render();
+
+			for(wizard in game.sprites["wizards"]) {
+				if (typeof game.sprites["wizards"][wizard] !== "function") {
+					game.sprites["wizards"][wizard].render();
+				}
+			}
 		},
 	}
 };

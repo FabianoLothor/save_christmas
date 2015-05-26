@@ -10,9 +10,11 @@ var settings = {
 	},
 	resources : {
 		images : {
+			// You can have problems with images of extensions differents and names equals
 			png : [
-				"santa_claus",
 				"gift",
+				"santa_claus",
+				"wizard",
 			],
 		},
 	},
