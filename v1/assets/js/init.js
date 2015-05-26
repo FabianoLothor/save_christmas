@@ -1,10 +1,10 @@
 var canvas, context, images;
 
-$(document).ready(function () {
+window.onload = function () {
 	loadResources();
 
 	initialize();
-});
+};
 
 function initialize () {
 	canvas = document.getElementById('canvas');
